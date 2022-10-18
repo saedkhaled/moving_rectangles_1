@@ -4,13 +4,13 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/palette.dart';
 import 'package:flame/extensions.dart';
-import 'package:moving_rectangles_1/circle.dart';
+import 'package:moving_rectangles_1/square.dart';
 
-class Square extends PositionComponent with CollisionCallbacks {
+class Circle extends PositionComponent with CollisionCallbacks {
   // velocity is 0 here
-  var velocity = Vector2.random().normalized() * 200;
+  // var velocity = Vector2.random().normalized() * 200;
 
-  var squareSize = 30.0;
+  var circleSize = 5.0;
   var rotationSpeed = 20.0;
 
   var color = BasicPalette.white.paint()
@@ -23,9 +23,7 @@ class Square extends PositionComponent with CollisionCallbacks {
     super.onLoad();
 
     add(RectangleHitbox());
-    size.setValues(squareSize, squareSize);
-    add(Circle()
-      ..color = color);
+    size.setValues(circleSize, circleSize);
     anchor = Anchor.center;
   }
 
@@ -35,15 +33,15 @@ class Square extends PositionComponent with CollisionCallbacks {
   void update(double dt) {
     super.update(dt);
     // speed is refresh frequency independent
-    position += velocity * dt;
-    var angleDelta = dt * rotationSpeed;
-    angle = (angle + angleDelta) % (2 * pi);
+    // position += velocity * dt;
+    // var angleDelta = dt * rotationSpeed;
+    // angle = (angle + angleDelta) % (2 * pi);
   }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    canvas.drawRect(size.toRect(), color);
+    canvas.drawCircle(const Offset(-15, -15),5, color);
   }
 
   @override
@@ -52,7 +50,10 @@ class Square extends PositionComponent with CollisionCallbacks {
     if (other is Square) {
       other.velocity = Vector2.random().normalized() * 300;
     } else if (other is ScreenHitbox) {
-      velocity.negate();
+      var parentComponent = parent;
+      if(parentComponent is Square) {
+        parentComponent.velocity.negate();
+      }
     }
     super.onCollisionStart(intersectionPoints, other);
   }

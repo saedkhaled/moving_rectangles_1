@@ -4,7 +4,9 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
+import 'package:moving_rectangles_1/astroid.dart';
 import 'package:moving_rectangles_1/square.dart';
+import 'package:moving_rectangles_1/utils.dart';
 
 class MyGame extends FlameGame
     with TapDetector, DoubleTapDetector, HasCollisionDetection {
@@ -44,22 +46,36 @@ class MyGame extends FlameGame
 
     //check if the tap location is within any of the shapes on the screen
     // and if so remove the shape from the screen
+    var isSquare = true;
     final handled = children.any((component) {
       if (component is Square && component.containsPoint(touchPoint)) {
         // remove(component);
         component.velocity.negate();
-        return true;
+      } else if (component is Asteroid && component.containsPoint(touchPoint)) {
+        component.velocity.negate();
+      } else if (info.eventPosition.game.x < (size.x / 2)) {
+        isSquare = true;
+      } else if (info.eventPosition.game.x >= (size.x / 2)) {
+        isSquare = false;
       }
       return false;
     });
 
     // this is a clean location with no squares
     // create and add a new shape to the component tree under the FlameGame
-    if (!handled) {
+    if (!handled && isSquare) {
       add(Square()
-        ..position = touchPoint
+        ..position = Utils.generateRandomPosition(size, Vector2(200, 200))
         ..squareSize = 30
-        ..velocity = Vector2.random().normalized() * 300
+        ..velocity = Utils.generateRandomVelocity(size, 100, 1000)
+        ..color = (colors[Random().nextInt(6)].paint()
+          ..style = ui.PaintingStyle.stroke
+          ..strokeWidth = 2));
+    } else if (!handled && !isSquare) {
+      add(Asteroid()
+        ..position = Utils.generateRandomPosition(size, Vector2(200, 200))
+        ..size = Vector2.all(100)
+        ..velocity = Utils.generateRandomVelocity(size, 100, 1000)
         ..color = (colors[Random().nextInt(6)].paint()
           ..style = ui.PaintingStyle.stroke
           ..strokeWidth = 2));

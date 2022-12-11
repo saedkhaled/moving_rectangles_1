@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -41,20 +40,34 @@ class Circle extends PositionComponent with CollisionCallbacks {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    canvas.drawCircle(const Offset(-15, -15),5, color);
+    canvas.drawCircle(const Offset(-15, -15), 5, color);
   }
 
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Square) {
-      other.velocity = Vector2.random().normalized() * 300;
-    } else if (other is ScreenHitbox) {
+    if (other is Circle) {
       var parentComponent = parent;
-      if(parentComponent is Square) {
-        parentComponent.velocity.negate();
+      if (parentComponent is Square) {
+        parentComponent.rotationSpeed = -1 * parentComponent.rotationSpeed;
       }
     }
+    // if (other is Square) {
+    //   other.velocity.negate();
+    // } else if (other is Polygon) {
+    //   other.velocity.negate();
+    // } else if (other is Circle) {
+    //   var parentComponent = parent;
+    //   if (parentComponent is Square) {
+    //     parentComponent.rotationSpeed = -1 * parentComponent.rotationSpeed;
+    //
+    //   }
+    // } else if (other is ScreenHitbox) {
+    //   var parentComponent = parent;
+    //   if (parentComponent is Square) {
+    //     parentComponent.velocity.negate();
+    //   }
+    // }
     super.onCollisionStart(intersectionPoints, other);
   }
 }

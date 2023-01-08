@@ -21,7 +21,7 @@ class Circle extends PositionComponent with CollisionCallbacks {
   Future<void>? onLoad() async {
     super.onLoad();
 
-    add(RectangleHitbox());
+    add(CircleHitbox());
     size.setValues(circleSize, circleSize);
     anchor = Anchor.center;
   }
